@@ -63,6 +63,7 @@ export default function Home() {
         .then((res) => {
           localStorage.setItem("UserEmail", res.data.response.UserEmail);
           localStorage.setItem("RUC", res.data.response.RUC);
+
           setNorError("¡Inicia sesión exitosamente! Esperar");
           let root = res.data.response.company;
           routeChange(root);

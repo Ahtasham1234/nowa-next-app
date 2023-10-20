@@ -7,6 +7,7 @@ import SSRProvider from "react-bootstrap/SSRProvider";
 import { Provider, useDispatch } from "react-redux";
 import store from "@/store";
 import { authActions } from "@/redux/authSlice";
+import { companyActions } from "@/redux/companySlice";
 
 const layouts = {
   Contentlayout: Contentlayout,
@@ -20,6 +21,7 @@ function MyApp({ Component, pageProps }) {
     const storedRUC = localStorage.getItem("RUC");
     if (storedEmail && storedRUC) {
       store.dispatch(authActions.signIn());
+      store.dispatch(companyActions.company());
     }
   }
 
