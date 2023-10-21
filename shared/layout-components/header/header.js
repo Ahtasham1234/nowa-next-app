@@ -1,14 +1,23 @@
-import React,{useState} from "react";
-import { Navbar, Dropdown, Button, Form, Col, Row, Modal } from "react-bootstrap";
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import Link from "next/link"
-import { useDispatch, useSelector } from 'react-redux';
-import { Delete } from '../../redux/actions/action';
-import ProductService from '../../services/ProductService';
+import React, { useState } from "react";
+import {
+  Navbar,
+  Dropdown,
+  Button,
+  Form,
+  Col,
+  Row,
+  Modal,
+} from "react-bootstrap";
+import PerfectScrollbar from "react-perfect-scrollbar";
+import Link from "next/link";
+import { useDispatch, useSelector } from "react-redux";
+import { Delete } from "../../redux/actions/action";
+import ProductService from "../../services/ProductService";
 import { useRouter } from "next/router";
+import { companyActions } from "@/redux/companySlice";
 
 export default function Header() {
-  let { basePath } = useRouter()
+  let { basePath } = useRouter();
   const [Lang, setLang] = React.useState(false);
   function Fullscreen() {
     if (
@@ -34,11 +43,13 @@ export default function Header() {
       }
     }
   }
-  const [selectedValue, setSelectedValue] = useState('None');
+  const [selectedValue, setSelectedValue] = useState("None");
+  const dispatch = useDispatch();
   const handleSelectChange = (event) => {
     const selectedOption = event.target.value;
     setSelectedValue(selectedOption);
-    console.log('Selected value:', selectedOption);
+    dispatch(companyActions.company({ company: selectedOption }));
+    console.log("Selected value:", selectedOption);
   };
 
   //leftsidemenu
@@ -66,10 +77,7 @@ export default function Header() {
   const [price, setPrice] = React.useState(0);
   // console.log(price);
 
-  let getdata = useSelector((state) => state.cartreducer.carts);
-
-
-  const dispatch = useDispatch();
+  let getdata = useSelector((state) => state.cartreducer?.carts);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -77,7 +85,6 @@ export default function Header() {
     setAnchorEl(event.currentTarget);
     // console.log(open)
   };
-
 
   const [Data, setData] = React.useState([]);
 
@@ -87,53 +94,59 @@ export default function Header() {
   // console.log(getdata);
 
   const compare = () => {
-    let comparedata = getdata.filter((e) => {
-      console.log(e, id)
-      return e.id === id
+    let comparedata = getdata?.filter((e) => {
+      console.log(e, id);
+      return e.id === id;
     });
     setData(comparedata);
-  }
-
-  React.useEffect(() => {
-    compare();
-    // eslint-disable-next-line 
-  }, [id])
-  const ondelete = (id) => {
-    dispatch(Delete(id))
-  }
-
-
-  function total() {
-    let price = 0;
-    getdata.map((ele) => {
-      price = ele.price * ele.qnty + price
-      return price;
-    });
-    setPrice(price);
   };
 
   React.useEffect(() => {
+    compare();
+    // eslint-disable-next-line
+  }, [id]);
+  const ondelete = (id) => {
+    dispatch(Delete(id));
+  };
+
+  function total() {
+    let price = 0;
+    getdata?.map((ele) => {
+      price = ele.price * ele.qnty + price;
+      return price;
+    });
+    setPrice(price);
+  }
+
+  React.useEffect(() => {
     total();
-  })
-  // let navigate = useNavigate(); 
-  let navigate
+  });
+  // let navigate = useNavigate();
+  let navigate;
   const routeChange = () => {
     let path = `/`;
     navigate(path);
-  }
+  };
   return (
     <Navbar className="main-header side-header sticky nav nav-item">
       <div className="main-container container-fluid">
         <div className="main-header-left ">
           <div className="responsive-logo">
-            <Link href={`/components/dashboards/dashboard1/`} className="header-logo">
+            <Link
+              href={`/components/dashboards/dashboard1/`}
+              className="header-logo"
+            >
               <img
-                src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/brand/logo.png`}
+                src={`${
+                  process.env.NODE_ENV === "production" ? basePath : ""
+                }/assets/img/brand/logo.png`}
                 className="mobile-logo logo-1"
                 alt="logo"
               />
               <img
-                src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/brand/logo-white.png`}
+                src={`${
+                  process.env.NODE_ENV === "production" ? basePath : ""
+                }/assets/img/brand/logo-white.png`}
                 className="mobile-logo dark-logo-1"
                 alt="logo"
               />
@@ -154,12 +167,16 @@ export default function Header() {
           <div className="logo-horizontal">
             <Link href={`/dashboard/dashboard-1`} className="header-logo">
               <img
-                src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/brand/logo.png`}
+                src={`${
+                  process.env.NODE_ENV === "production" ? basePath : ""
+                }/assets/img/brand/logo.png`}
                 className="mobile-logo logo-1"
                 alt="logo"
               />
               <img
-                src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/brand/logo-white.png`}
+                src={`${
+                  process.env.NODE_ENV === "production" ? basePath : ""
+                }/assets/img/brand/logo-white.png`}
                 className="mobile-logo dark-logo-1"
                 alt="logo"
               />
@@ -186,7 +203,6 @@ export default function Header() {
           <div className="mb-0 navbar navbar-expand-lg   navbar-nav-right responsive-navbar navbar-dark p-0">
             <Navbar.Collapse className="collapse" id="navbarSupportedContent-4">
               <ul className="nav nav-item header-icons navbar-nav-right ">
-
                 <li className="dropdown nav-item">
                   <>
                     <Link
@@ -214,11 +230,14 @@ export default function Header() {
                     >
                       <Modal.Header>
                         <h6 className="modal-title">Choose Country</h6>
-                        <Button variant=""
+                        <Button
+                          variant=""
                           type="button"
                           onClick={() => setLang(false)}
                         >
-                          <span aria-hidden="true" className="text-dark">X</span>
+                          <span aria-hidden="true" className="text-dark">
+                            X
+                          </span>
                         </Button>
                       </Modal.Header>
                       <Modal.Body>
@@ -231,7 +250,11 @@ export default function Header() {
                               <span className="country-selector">
                                 <img
                                   alt=""
-                                  src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/flags/us_flag.jpg`}
+                                  src={`${
+                                    process.env.NODE_ENV === "production"
+                                      ? basePath
+                                      : ""
+                                  }/assets/img/flags/us_flag.jpg`}
                                   className="me-3 language"
                                 />
                               </span>
@@ -240,12 +263,19 @@ export default function Header() {
                           </Col>{" "}
                           <Col lg={6} as="li" className="mb-2 mb-2">
                             {" "}
-                            <Link href="#!" className="btn btn-country btn-lg btn-block">
+                            <Link
+                              href="#!"
+                              className="btn btn-country btn-lg btn-block"
+                            >
                               {" "}
                               <span className="country-selector">
                                 <img
                                   alt=""
-                                  src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/flags/italy_flag.jpg`}
+                                  src={`${
+                                    process.env.NODE_ENV === "production"
+                                      ? basePath
+                                      : ""
+                                  }/assets/img/flags/italy_flag.jpg`}
                                   className="me-3 language"
                                 />
                               </span>
@@ -254,12 +284,19 @@ export default function Header() {
                           </Col>{" "}
                           <Col lg={6} as="li" className="mb-2">
                             {" "}
-                            <Link href="#!" className="btn btn-country btn-lg btn-block">
+                            <Link
+                              href="#!"
+                              className="btn btn-country btn-lg btn-block"
+                            >
                               {" "}
                               <span className="country-selector">
                                 <img
                                   alt=""
-                                  src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/flags/spain_flag.jpg`}
+                                  src={`${
+                                    process.env.NODE_ENV === "production"
+                                      ? basePath
+                                      : ""
+                                  }/assets/img/flags/spain_flag.jpg`}
                                   className="me-3 language"
                                 />
                               </span>
@@ -268,12 +305,19 @@ export default function Header() {
                           </Col>{" "}
                           <Col lg={6} as="li" className="mb-2">
                             {" "}
-                            <Link href="#!" className="btn btn-country btn-lg btn-block">
+                            <Link
+                              href="#!"
+                              className="btn btn-country btn-lg btn-block"
+                            >
                               {" "}
                               <span className="country-selector">
                                 <img
                                   alt=""
-                                  src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/flags/india_flag.jpg`}
+                                  src={`${
+                                    process.env.NODE_ENV === "production"
+                                      ? basePath
+                                      : ""
+                                  }/assets/img/flags/india_flag.jpg`}
                                   className="me-3 language"
                                 />
                               </span>
@@ -282,12 +326,19 @@ export default function Header() {
                           </Col>{" "}
                           <Col lg={6} as="li" className="mb-2">
                             {" "}
-                            <Link href="#!" className="btn btn-country btn-lg btn-block">
+                            <Link
+                              href="#!"
+                              className="btn btn-country btn-lg btn-block"
+                            >
                               {" "}
                               <span className="country-selector">
                                 <img
                                   alt=""
-                                  src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/flags/french_flag.jpg`}
+                                  src={`${
+                                    process.env.NODE_ENV === "production"
+                                      ? basePath
+                                      : ""
+                                  }/assets/img/flags/french_flag.jpg`}
                                   className="me-3 language"
                                 />
                               </span>
@@ -296,12 +347,19 @@ export default function Header() {
                           </Col>{" "}
                           <Col lg={6} as="li" className="mb-2">
                             {" "}
-                            <Link href="#!" className="btn btn-country btn-lg btn-block">
+                            <Link
+                              href="#!"
+                              className="btn btn-country btn-lg btn-block"
+                            >
                               {" "}
                               <span className="country-selector">
                                 <img
                                   alt=""
-                                  src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/flags/mexico.jpg`}
+                                  src={`${
+                                    process.env.NODE_ENV === "production"
+                                      ? basePath
+                                      : ""
+                                  }/assets/img/flags/mexico.jpg`}
                                   className="me-3 language"
                                 />
                               </span>
@@ -310,12 +368,19 @@ export default function Header() {
                           </Col>{" "}
                           <Col lg={6} as="li" className="mb-2">
                             {" "}
-                            <Link href="#!" className="btn btn-country btn-lg btn-block">
+                            <Link
+                              href="#!"
+                              className="btn btn-country btn-lg btn-block"
+                            >
                               {" "}
                               <span className="country-selector">
                                 <img
                                   alt=""
-                                  src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/flags/singapore.jpg`}
+                                  src={`${
+                                    process.env.NODE_ENV === "production"
+                                      ? basePath
+                                      : ""
+                                  }/assets/img/flags/singapore.jpg`}
                                   className="me-3 language"
                                 />
                               </span>
@@ -324,12 +389,19 @@ export default function Header() {
                           </Col>{" "}
                           <Col lg={6} as="li" className="mb-2">
                             {" "}
-                            <Link href="#!" className="btn btn-country btn-lg btn-block">
+                            <Link
+                              href="#!"
+                              className="btn btn-country btn-lg btn-block"
+                            >
                               {" "}
                               <span className="country-selector">
                                 <img
                                   alt=""
-                                  src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/flags/poland.jpg`}
+                                  src={`${
+                                    process.env.NODE_ENV === "production"
+                                      ? basePath
+                                      : ""
+                                  }/assets/img/flags/poland.jpg`}
                                   className="me-3 language"
                                 />
                               </span>
@@ -338,12 +410,19 @@ export default function Header() {
                           </Col>{" "}
                           <Col lg={6} as="li" className="mb-2">
                             {" "}
-                            <Link href="#!" className="btn btn-country btn-lg btn-block">
+                            <Link
+                              href="#!"
+                              className="btn btn-country btn-lg btn-block"
+                            >
                               {" "}
                               <span className="country-selector">
                                 <img
                                   alt=""
-                                  src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/flags/austria.jpg`}
+                                  src={`${
+                                    process.env.NODE_ENV === "production"
+                                      ? basePath
+                                      : ""
+                                  }/assets/img/flags/austria.jpg`}
                                   className="me-3 language"
                                 />
                               </span>
@@ -352,12 +431,19 @@ export default function Header() {
                           </Col>{" "}
                           <Col lg={6} as="li" className="mb-2">
                             {" "}
-                            <Link href="#!" className="btn btn-country btn-lg btn-block">
+                            <Link
+                              href="#!"
+                              className="btn btn-country btn-lg btn-block"
+                            >
                               {" "}
                               <span className="country-selector">
                                 <img
                                   alt=""
-                                  src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/flags/russia_flag.jpg`}
+                                  src={`${
+                                    process.env.NODE_ENV === "production"
+                                      ? basePath
+                                      : ""
+                                  }/assets/img/flags/russia_flag.jpg`}
                                   className="me-3 language"
                                 />
                               </span>
@@ -366,12 +452,19 @@ export default function Header() {
                           </Col>{" "}
                           <Col lg={6} as="li" className="mb-2">
                             {" "}
-                            <Link href="#!" className="btn btn-country btn-lg btn-block">
+                            <Link
+                              href="#!"
+                              className="btn btn-country btn-lg btn-block"
+                            >
                               {" "}
                               <span className="country-selector">
                                 <img
                                   alt=""
-                                  src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/flags/germany_flag.jpg`}
+                                  src={`${
+                                    process.env.NODE_ENV === "production"
+                                      ? basePath
+                                      : ""
+                                  }/assets/img/flags/germany_flag.jpg`}
                                   className="me-3 language"
                                 />
                               </span>
@@ -380,12 +473,19 @@ export default function Header() {
                           </Col>{" "}
                           <Col lg={6} as="li" className="mb-2">
                             {" "}
-                            <Link href="#!" className="btn btn-country btn-lg btn-block">
+                            <Link
+                              href="#!"
+                              className="btn btn-country btn-lg btn-block"
+                            >
                               {" "}
                               <span className="country-selector">
                                 <img
                                   alt=""
-                                  src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/flags/argentina.jpg`}
+                                  src={`${
+                                    process.env.NODE_ENV === "production"
+                                      ? basePath
+                                      : ""
+                                  }/assets/img/flags/argentina.jpg`}
                                   className="me-3 language"
                                 />
                               </span>
@@ -394,12 +494,19 @@ export default function Header() {
                           </Col>{" "}
                           <Col lg={6} as="li" className="mb-2">
                             {" "}
-                            <Link href="#!" className="btn btn-country btn-lg btn-block">
+                            <Link
+                              href="#!"
+                              className="btn btn-country btn-lg btn-block"
+                            >
                               {" "}
                               <span className="country-selector">
                                 <img
                                   alt=""
-                                  src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/flags/brazil.jpg`}
+                                  src={`${
+                                    process.env.NODE_ENV === "production"
+                                      ? basePath
+                                      : ""
+                                  }/assets/img/flags/brazil.jpg`}
                                   className="me-3 language"
                                 />
                               </span>
@@ -408,12 +515,19 @@ export default function Header() {
                           </Col>{" "}
                           <Col lg={6} as="li" className="mb-2">
                             {" "}
-                            <Link href="#!" className="btn btn-country btn-lg btn-block">
+                            <Link
+                              href="#!"
+                              className="btn btn-country btn-lg btn-block"
+                            >
                               {" "}
                               <span className="country-selector">
                                 <img
                                   alt=""
-                                  src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/flags/uae.jpg`}
+                                  src={`${
+                                    process.env.NODE_ENV === "production"
+                                      ? basePath
+                                      : ""
+                                  }/assets/img/flags/uae.jpg`}
                                   className="me-3 language"
                                 />
                               </span>
@@ -422,12 +536,19 @@ export default function Header() {
                           </Col>{" "}
                           <Col lg={6} as="li" className="mb-2">
                             {" "}
-                            <Link href="#!" className="btn btn-country btn-lg btn-block">
+                            <Link
+                              href="#!"
+                              className="btn btn-country btn-lg btn-block"
+                            >
                               {" "}
                               <span className="country-selector">
                                 <img
                                   alt=""
-                                  src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/flags/china.jpg`}
+                                  src={`${
+                                    process.env.NODE_ENV === "production"
+                                      ? basePath
+                                      : ""
+                                  }/assets/img/flags/china.jpg`}
                                   className="me-3 language"
                                 />
                               </span>
@@ -436,12 +557,19 @@ export default function Header() {
                           </Col>{" "}
                           <Col lg={6} as="li" className="mb-2">
                             {" "}
-                            <Link href="#!" className="btn btn-country btn-lg btn-block">
+                            <Link
+                              href="#!"
+                              className="btn btn-country btn-lg btn-block"
+                            >
                               {" "}
                               <span className="country-selector">
                                 <img
                                   alt=""
-                                  src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/flags/uk.jpg`}
+                                  src={`${
+                                    process.env.NODE_ENV === "production"
+                                      ? basePath
+                                      : ""
+                                  }/assets/img/flags/uk.jpg`}
                                   className="me-3 language"
                                 />
                               </span>
@@ -450,12 +578,19 @@ export default function Header() {
                           </Col>{" "}
                           <Col lg={6} as="li" className="mb-2">
                             {" "}
-                            <Link href="#!" className="btn btn-country btn-lg btn-block">
+                            <Link
+                              href="#!"
+                              className="btn btn-country btn-lg btn-block"
+                            >
                               {" "}
                               <span className="country-selector">
                                 <img
                                   alt=""
-                                  src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/flags/malaysia.jpg`}
+                                  src={`${
+                                    process.env.NODE_ENV === "production"
+                                      ? basePath
+                                      : ""
+                                  }/assets/img/flags/malaysia.jpg`}
                                   className="me-3 language"
                                 />
                               </span>
@@ -464,12 +599,19 @@ export default function Header() {
                           </Col>{" "}
                           <Col lg={6} as="li" className="mb-2">
                             {" "}
-                            <Link href="#!" className="btn btn-country btn-lg btn-block">
+                            <Link
+                              href="#!"
+                              className="btn btn-country btn-lg btn-block"
+                            >
                               {" "}
                               <span className="country-selector">
                                 <img
                                   alt=""
-                                  src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/flags/canada.jpg`}
+                                  src={`${
+                                    process.env.NODE_ENV === "production"
+                                      ? basePath
+                                      : ""
+                                  }/assets/img/flags/canada.jpg`}
                                   className="me-3 language"
                                 />
                               </span>
@@ -484,7 +626,10 @@ export default function Header() {
                 <li className="dropdown nav-item">
                   <a
                     className="new nav-link theme-layout nav-link-bg layout-setting "
-                    onClick={() => { Darkmode() }}>
+                    onClick={() => {
+                      Darkmode();
+                    }}
+                  >
                     <span className="dark-layout">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -511,38 +656,50 @@ export default function Header() {
                 </li>
 
                 <Dropdown className=" nav-item main-header-notification d-flex">
-                  <Dropdown.Toggle className="new nav-link" href="#!" variant="">
+                  <Dropdown.Toggle
+                    className="new nav-link"
+                    href="#!"
+                    variant=""
+                  >
                     <>
-                      {
-                        getdata.length ?
-                          <>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="header-icon-svgs"
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                            >
-                              <path d="M21.822 7.431A1 1 0 0 0 21 7H7.333L6.179 4.23A1.994 1.994 0 0 0 4.333 3H2v2h2.333l4.744 11.385A1 1 0 0 0 10 17h8c.417 0 .79-.259.937-.648l3-8a1 1 0 0 0-.115-.921zM17.307 15h-6.64l-2.5-6h11.39l-2.25 6z" />
-                              <circle cx="10.5" cy="19.5" r="1.5" />
-                              <circle cx="17.5" cy="19.5" r="1.5" />
-                            </svg>
-                            <span className="badge bg-warning header-badge" onClick={handleClick} >{getdata.length}</span>
-                          </> : <>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="header-icon-svgs"
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                            >
-                              <path d="M21.822 7.431A1 1 0 0 0 21 7H7.333L6.179 4.23A1.994 1.994 0 0 0 4.333 3H2v2h2.333l4.744 11.385A1 1 0 0 0 10 17h8c.417 0 .79-.259.937-.648l3-8a1 1 0 0 0-.115-.921zM17.307 15h-6.64l-2.5-6h11.39l-2.25 6z" />
-                              <circle cx="10.5" cy="19.5" r="1.5" />
-                              <circle cx="17.5" cy="19.5" r="1.5" />
-                            </svg>
-                            <span className="badge bg-warning header-badge">7</span>
-                          </>
-                      }
+                      {getdata?.length ? (
+                        <>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="header-icon-svgs"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M21.822 7.431A1 1 0 0 0 21 7H7.333L6.179 4.23A1.994 1.994 0 0 0 4.333 3H2v2h2.333l4.744 11.385A1 1 0 0 0 10 17h8c.417 0 .79-.259.937-.648l3-8a1 1 0 0 0-.115-.921zM17.307 15h-6.64l-2.5-6h11.39l-2.25 6z" />
+                            <circle cx="10.5" cy="19.5" r="1.5" />
+                            <circle cx="17.5" cy="19.5" r="1.5" />
+                          </svg>
+                          <span
+                            className="badge bg-warning header-badge"
+                            onClick={handleClick}
+                          >
+                            {getdata?.length}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="header-icon-svgs"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M21.822 7.431A1 1 0 0 0 21 7H7.333L6.179 4.23A1.994 1.994 0 0 0 4.333 3H2v2h2.333l4.744 11.385A1 1 0 0 0 10 17h8c.417 0 .79-.259.937-.648l3-8a1 1 0 0 0-.115-.921zM17.307 15h-6.64l-2.5-6h11.39l-2.25 6z" />
+                            <circle cx="10.5" cy="19.5" r="1.5" />
+                            <circle cx="17.5" cy="19.5" r="1.5" />
+                          </svg>
+                          <span className="badge bg-warning header-badge">
+                            7
+                          </span>
+                        </>
+                      )}
                     </>
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
@@ -552,55 +709,77 @@ export default function Header() {
                           Shopping Cart
                         </h6>
                         <span className="badge badge-pill bg-indigo ms-auto my-auto float-end">
-                          {
-                            getdata.length ? <>Items ({getdata.length})</> : <>Items (07)</>
-                          }
+                          {getdata?.length ? (
+                            <>Items ({getdata.length})</>
+                          ) : (
+                            <>Items (07)</>
+                          )}
                         </span>
                       </div>
                     </div>
                     <div className="main-cart-list cart-scroll">
-                      {
-                        getdata.length ?
-                          <div>
-                            <PerfectScrollbar style={{ height: "200px" }}>
-                              {
-                                getdata.map((item) => {
-                                  return (
-                                    <React.Fragment key={item.id}>
-
-                                      <div as="dropdown-item" open={open} onClick={handleClick} className="dropdown-item d-flex border-bottom main-cart-item">
-                                        {/* <Link href={`/components/pages/e-commerce/product-details/`}> */}
-                                        <Link href={`/components/pages/e-commerce/product-details/`} open={open} onClick={ProductService.getidfronShop(item.id)}>
-                                          <img src={(item.src)} className="drop-img cover-image" alt="" />
-                                        </Link>
-                                        <div className="ms-3 text-start">
-                                          <p className="mb-1 text-muted tx-13">{item.name}</p>
-                                          <span className="text-dark tx-semibold tx-12">$ : {item.price}</span>
-                                          <p>Quantity : {item.qnty}</p>
-                                        </div>
-                                        <div className="ms-auto my-auto">
-                                          <div className="" onClick={() => ondelete(item.id)}>
-                                            <i className="fe fe-trash-2 text-end text-danger"></i>
-                                          </div>
-                                        </div>
-
+                      {getdata?.length ? (
+                        <div>
+                          <PerfectScrollbar style={{ height: "200px" }}>
+                            {getdata.map((item) => {
+                              return (
+                                <React.Fragment key={item.id}>
+                                  <div
+                                    as="dropdown-item"
+                                    open={open}
+                                    onClick={handleClick}
+                                    className="dropdown-item d-flex border-bottom main-cart-item"
+                                  >
+                                    {/* <Link href={`/components/pages/e-commerce/product-details/`}> */}
+                                    <Link
+                                      href={`/components/pages/e-commerce/product-details/`}
+                                      open={open}
+                                      onClick={ProductService.getidfronShop(
+                                        item.id
+                                      )}
+                                    >
+                                      <img
+                                        src={item.src}
+                                        className="drop-img cover-image"
+                                        alt=""
+                                      />
+                                    </Link>
+                                    <div className="ms-3 text-start">
+                                      <p className="mb-1 text-muted tx-13">
+                                        {item.name}
+                                      </p>
+                                      <span className="text-dark tx-semibold tx-12">
+                                        $ : {item.price}
+                                      </span>
+                                      <p>Quantity : {item.qnty}</p>
+                                    </div>
+                                    <div className="ms-auto my-auto">
+                                      <div
+                                        className=""
+                                        onClick={() => ondelete(item.id)}
+                                      >
+                                        <i className="fe fe-trash-2 text-end text-danger"></i>
                                       </div>
-
-                                    </React.Fragment>
-                                  )
-                                })
-                              }
-                            </PerfectScrollbar>
-                          </div>
-                          :
-                          <><Link
+                                    </div>
+                                  </div>
+                                </React.Fragment>
+                              );
+                            })}
+                          </PerfectScrollbar>
+                        </div>
+                      ) : (
+                        <>
+                          <Link
                             className="d-flex border-bottom  main-cart-item dropdown-item"
                             href={`/components/pages/e-commerce/product-details/`}
                           >
-
                             <img
                               className="drop-img cover-image"
-                              src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/ecommerce/05.jpg`}
+                              src={`${
+                                process.env.NODE_ENV === "production"
+                                  ? basePath
+                                  : ""
+                              }/assets/img/ecommerce/05.jpg`}
                               alt=""
                             />
                             <div className="ms-3 text-start">
@@ -618,107 +797,119 @@ export default function Header() {
                               </div>
                             </div>
                           </Link>
-                            <Link
-                              className="d-flex border-bottom main-cart-item dropdown-item"
-                              href={`/components/pages/e-commerce/product-details/`}
-                            >
-
-                              <img
-                                alt=""
-                                className="drop-img cover-image"
-                                src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/ecommerce/02.jpg`}
-                              />
-                              <div className="ms-3 text-start">
-                                <h5 className="mb-1 text-muted tx-13">
-                                  White Ear Buds
-                                </h5>
-                                <div className="text-dark tx-semibold tx-12">
-                                  3 * $ 59.00
-                                </div>
+                          <Link
+                            className="d-flex border-bottom main-cart-item dropdown-item"
+                            href={`/components/pages/e-commerce/product-details/`}
+                          >
+                            <img
+                              alt=""
+                              className="drop-img cover-image"
+                              src={`${
+                                process.env.NODE_ENV === "production"
+                                  ? basePath
+                                  : ""
+                              }/assets/img/ecommerce/02.jpg`}
+                            />
+                            <div className="ms-3 text-start">
+                              <h5 className="mb-1 text-muted tx-13">
+                                White Ear Buds
+                              </h5>
+                              <div className="text-dark tx-semibold tx-12">
+                                3 * $ 59.00
                               </div>
+                            </div>
 
+                            <div className="ms-auto my-auto">
+                              <div className="">
+                                <i className="fe fe-trash-2 text-end text-danger"></i>
+                              </div>
+                            </div>
+                          </Link>
+                          <Link
+                            className="d-flex border-bottom main-cart-item dropdown-item"
+                            href={`/components/pages/e-commerce/product-details/`}
+                          >
+                            <img
+                              alt=""
+                              className="drop-img cover-image"
+                              src={`${
+                                process.env.NODE_ENV === "production"
+                                  ? basePath
+                                  : ""
+                              }/assets/img/ecommerce/12.jpg`}
+                            />
+                            <div className="ms-3 text-start">
+                              <h5 className="mb-1 text-muted tx-13">
+                                Branded Black Headset
+                              </h5>
+                              <div className="text-dark tx-semibold tx-12">
+                                2 * $ 39.99
+                              </div>
+                            </div>
+                            <div className="ms-auto my-auto">
+                              <div className="">
+                                <i className="fe fe-trash-2 text-end text-danger"></i>
+                              </div>
+                            </div>
+                          </Link>
+                          <Link
+                            className="d-flex border-bottom main-cart-item dropdown-item"
+                            href={`/components/pages/e-commerce/product-details/`}
+                          >
+                            <img
+                              alt=""
+                              className="drop-img cover-image"
+                              src={`${
+                                process.env.NODE_ENV === "production"
+                                  ? basePath
+                                  : ""
+                              }/assets/img/ecommerce/06.jpg`}
+                            />
+                            <div className="ms-3 text-start">
+                              <h5 className="mb-1 text-muted tx-13">
+                                Glass Decor Item
+                              </h5>
+                              <div className="text-dark tx-semibold tx-12">
+                                5 * $ 5.99
+                              </div>
+                            </div>
 
-                              <div className="ms-auto my-auto">
-                                <div className="">
-                                  <i className="fe fe-trash-2 text-end text-danger"></i>
-                                </div>
+                            <div className="ms-auto my-auto">
+                              <div className="">
+                                <i className="fe fe-trash-2 text-end text-danger"></i>
                               </div>
-                            </Link>
-                            <Link
-                              className="d-flex border-bottom main-cart-item dropdown-item"
-                              href={`/components/pages/e-commerce/product-details/`}
-                            >
+                            </div>
+                          </Link>
+                          <Link
+                            className="d-flex border-bottom main-cart-item dropdown-item"
+                            href={`/components/pages/e-commerce/product-details/`}
+                          >
+                            <img
+                              className="drop-img cover-image"
+                              src={`${
+                                process.env.NODE_ENV === "production"
+                                  ? basePath
+                                  : ""
+                              }/assets/img/ecommerce/04.jpg`}
+                              alt=""
+                            />
 
-                              <img
-                                alt=""
-                                className="drop-img cover-image"
-                                src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/ecommerce/12.jpg`}
-                              />
-                              <div className="ms-3 text-start">
-                                <h5 className="mb-1 text-muted tx-13">
-                                  Branded Black Headset
-                                </h5>
-                                <div className="text-dark tx-semibold tx-12">
-                                  2 * $ 39.99
-                                </div>
+                            <div className="ms-3 text-start">
+                              <h5 className="mb-1 text-muted tx-13">
+                                Pink Teddy Bear
+                              </h5>
+                              <div className="text-dark tx-semibold tx-12">
+                                1 * $ 10.00
                               </div>
-                              <div className="ms-auto my-auto">
-                                <div className="">
-                                  <i className="fe fe-trash-2 text-end text-danger"></i>
-                                </div>
+                            </div>
+                            <div className="ms-auto my-auto">
+                              <div className="">
+                                <i className="fe fe-trash-2 text-end text-danger"></i>
                               </div>
-                            </Link>
-                            <Link
-                              className="d-flex border-bottom main-cart-item dropdown-item"
-                              href={`/components/pages/e-commerce/product-details/`}
-                            >
-
-                              <img
-                                alt=""
-                                className="drop-img cover-image"
-                                src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/ecommerce/06.jpg`}
-                              />
-                              <div className="ms-3 text-start">
-                                <h5 className="mb-1 text-muted tx-13">
-                                  Glass Decor Item
-                                </h5>
-                                <div className="text-dark tx-semibold tx-12">
-                                  5 * $ 5.99
-                                </div>
-                              </div>
-
-                              <div className="ms-auto my-auto">
-                                <div className="">
-                                  <i className="fe fe-trash-2 text-end text-danger"></i>
-                                </div>
-                              </div>
-                            </Link>
-                            <Link
-                              className="d-flex border-bottom main-cart-item dropdown-item"
-                              href={`/components/pages/e-commerce/product-details/`}
-                            >
-
-                              <img
-                                className="drop-img cover-image"
-                                src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/ecommerce/04.jpg`}
-                                alt=""
-                              />
-
-                              <div className="ms-3 text-start">
-                                <h5 className="mb-1 text-muted tx-13">
-                                  Pink Teddy Bear
-                                </h5>
-                                <div className="text-dark tx-semibold tx-12">
-                                  1 * $ 10.00
-                                </div>
-                              </div>
-                              <div className="ms-auto my-auto">
-                                <div className="">
-                                  <i className="fe fe-trash-2 text-end text-danger"></i>
-                                </div>
-                              </div>
-                            </Link> </>
-                      }
+                            </div>
+                          </Link>{" "}
+                        </>
+                      )}
                     </div>
                     <div className="dropdown-footer text-start">
                       <Link
@@ -728,13 +919,21 @@ export default function Header() {
                         Checkout
                       </Link>
                       <span className="float-end mt-1 tx-semibold">
-                        {getdata.length ? <>Sub Total: $ {price}</> : <> Sub Total : $ 00.00</>}
+                        {getdata?.length ? (
+                          <>Sub Total: $ {price}</>
+                        ) : (
+                          <> Sub Total : $ 00.00</>
+                        )}
                       </span>
                     </div>
                   </Dropdown.Menu>
                 </Dropdown>
                 <Dropdown className="dropdown nav-item  main-header-message ">
-                  <Dropdown.Toggle className="new nav-link" href="#!" variant="">
+                  <Dropdown.Toggle
+                    className="new nav-link"
+                    href="#!"
+                    variant=""
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="header-icon-svgs"
@@ -769,7 +968,11 @@ export default function Header() {
                           <img
                             className="  drop-img  cover-image  "
                             alt=""
-                            src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/faces/3.jpg`}
+                            src={`${
+                              process.env.NODE_ENV === "production"
+                                ? basePath
+                                : ""
+                            }/assets/img/faces/3.jpg`}
                           />
                           <span className="avatar-status bg-teal"></span>
 
@@ -778,8 +981,8 @@ export default function Header() {
                               <h5 className="mb-0 name">Teri Dactyl</h5>
                             </div>
                             <p className="mb-0 desc">
-                              {`I'm sorry but i'm `}not sure how to help you with
-                              that......
+                              {`I'm sorry but i'm `}not sure how to help you
+                              with that......
                             </p>
                             <p className="time mb-0 text-start float-start ms-2 mt-2">
                               Mar 15 3:55 PM
@@ -793,7 +996,11 @@ export default function Header() {
                           <img
                             className="drop-img cover-image"
                             alt=""
-                            src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/faces/2.jpg`}
+                            src={`${
+                              process.env.NODE_ENV === "production"
+                                ? basePath
+                                : ""
+                            }/assets/img/faces/2.jpg`}
                           />
                           <span className="avatar-status bg-teal"></span>
 
@@ -816,7 +1023,11 @@ export default function Header() {
                           <img
                             className="drop-img cover-image"
                             alt=""
-                            src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/faces/9.jpg`}
+                            src={`${
+                              process.env.NODE_ENV === "production"
+                                ? basePath
+                                : ""
+                            }/assets/img/faces/9.jpg`}
                           />
                           <span className="avatar-status bg-teal"></span>
 
@@ -839,7 +1050,11 @@ export default function Header() {
                           <img
                             className="drop-img cover-image"
                             alt=""
-                            src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/faces/12.jpg`}
+                            src={`${
+                              process.env.NODE_ENV === "production"
+                                ? basePath
+                                : ""
+                            }/assets/img/faces/12.jpg`}
                           />
                           <span className="avatar-status bg-teal"></span>
                           <div className="wd-90p">
@@ -861,7 +1076,11 @@ export default function Header() {
                           <img
                             className="drop-img cover-image"
                             alt=""
-                            src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/faces/5.jpg`}
+                            src={`${
+                              process.env.NODE_ENV === "production"
+                                ? basePath
+                                : ""
+                            }/assets/img/faces/5.jpg`}
                           />
                           <span className="avatar-status bg-teal"></span>
 
@@ -890,7 +1109,11 @@ export default function Header() {
                   </Dropdown.Menu>
                 </Dropdown>
                 <Dropdown className=" nav-item main-header-notification d-flex">
-                  <Dropdown.Toggle className="new nav-link" href="#!" variant="">
+                  <Dropdown.Toggle
+                    className="new nav-link"
+                    href="#!"
+                    variant=""
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="header-icon-svgs"
@@ -1061,8 +1284,17 @@ export default function Header() {
                   </Link>
                 </li>
                 <li>
-                  <div style={{ marginTop: "5px", borderRadius: "10px", overflow: "hidden" }}>
-                    <select  onChange={handleSelectChange} style={{ width: "100%", padding: "5px", border: "none" }}>
+                  <div
+                    style={{
+                      marginTop: "5px",
+                      borderRadius: "10px",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <select
+                      onChange={handleSelectChange}
+                      style={{ width: "100%", padding: "5px", border: "none" }}
+                    >
                       <option value="None">Select One</option>
                       <option value="sucursal1">Sucursal 1</option>
                       <option value="sucursal2">Sucursal 2</option>
@@ -1135,12 +1367,13 @@ export default function Header() {
                 <Dropdown className=" main-profile-menu nav nav-item nav-link ps-lg-2">
                   <Dropdown.Toggle
                     className="new nav-link profile-user d-flex"
-
                     variant=""
                   >
                     <img
                       alt=""
-                      src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/faces/2.jpg`}
+                      src={`${
+                        process.env.NODE_ENV === "production" ? basePath : ""
+                      }/assets/img/faces/2.jpg`}
                       className=""
                     />
                   </Dropdown.Toggle>
@@ -1150,7 +1383,11 @@ export default function Header() {
                         <div className="main-img-user">
                           <img
                             alt=""
-                            src={`${process.env.NODE_ENV === 'production' ? basePath : ''}/assets/img/faces/2.jpg`}
+                            src={`${
+                              process.env.NODE_ENV === "production"
+                                ? basePath
+                                : ""
+                            }/assets/img/faces/2.jpg`}
                             className=""
                           />
                         </div>
@@ -1164,10 +1401,16 @@ export default function Header() {
                         </div>
                       </div>
                     </div>
-                    <Link className="dropdown-item" href={`/components/pages/profile/`}>
+                    <Link
+                      className="dropdown-item"
+                      href={`/components/pages/profile/`}
+                    >
                       <i className="far fa-user-circle"></i>Profile
                     </Link>
-                    <Link className="dropdown-item" href={`/components/pages/mail/chat/`}>
+                    <Link
+                      className="dropdown-item"
+                      href={`/components/pages/mail/chat/`}
+                    >
                       <i className="far fa-smile"></i> chat
                     </Link>
                     <Link
@@ -1176,7 +1419,10 @@ export default function Header() {
                     >
                       <i className="far fa-envelope "></i>Inbox
                     </Link>
-                    <Link className="dropdown-item" href={`/components/pages/mail/mail/`}>
+                    <Link
+                      className="dropdown-item"
+                      href={`/components/pages/mail/mail/`}
+                    >
                       <i className="far fa-comment-dots"></i>Messages
                     </Link>
                     <Link
@@ -1185,7 +1431,7 @@ export default function Header() {
                     >
                       <i className="far fa-sun"></i> Settings
                     </Link>
-                    <Link className="dropdown-item" href="/" >
+                    <Link className="dropdown-item" href="/">
                       <i className="far fa-arrow-alt-circle-left"></i> Sign Out
                     </Link>
                   </Dropdown.Menu>
